@@ -1,149 +1,113 @@
-/* eslint-disable no-use-before-define */
-import React, { useRef, useEffect } from 'react'
-import { GOOGLE_API_KEY, GOOGLE_CLIENT__ID } from '../../config'
+import React from 'react'
+import qs from 'qs'
+import { parse } from 'url'
+import { remote } from 'electron'
+import axios from 'axios'
+import * as config from '../../config'
 
-export default () => {
-  // Client ID and API key from the Developer Console
-  const CLIENT_ID = GOOGLE_CLIENT__ID
-  const API_KEY = GOOGLE_API_KEY
-  // Array of API discovery doc URLs for APIs used by the quickstart
-  const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/tasks/v1/rest']
-  // Authorization scopes required by the API; multiple scopes can be
-  // included, separated by spaces.
-  const SCOPES = 'https://www.googleapis.com/auth/tasks.readonly'
-  const authorizeButton = useRef(null)
-  const signoutButton = useRef(null)
-  /**
-   *  On load, called to load the auth2 library and API client library.
-   */
-  useEffect(() => handleClientLoad())
+export const signInWithPopup = () =>
+  // eslint-disable-next-line no-unused-vars
+  new Promise((resolve, reject) => {
+    const authWindow = new remote.BrowserWindow({
+      width: 500,
+      height: 600,
+      show: true,
+    })
 
-  function handleClientLoad() {
-    console.log('============================load========')
-    console.log(gapi)
-    console.log('====================================')
-    gapi.load('client:auth2', initClient)
-  }
-  /**
-   *  Initializes the API client library and sets up sign-in state
-   *  listeners.
-   */
-  function initClient() {
-    gapi.client
-      .init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES,
-      })
-      .then(
-        (r) => {
-          console.log('=========r===========================')
-          console.log(r)
-          console.log('====================================')
-          // Listen for sign-in state changes.
-          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus)
-          // Handle the initial sign-in state.
-          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get())
-          // authorizeButton.onclick = handleAuthClick
-          // signoutButton.onclick = handleSignoutClick
-        },
-        (error) => {
-          appendPre(JSON.stringify(error, null, 2))
-          console.log('===========error=========================')
-          console.log(error)
-          console.log('====================================')
-        },
-      )
-  }
-  /**
-   *  Called when the signed in status changes, to update the UI
-   *  appropriately. After a sign-in, the API is called.
-   */
-  function updateSigninStatus(isSignedIn) {
-    if (isSignedIn) {
-      console.log('====isSignedIn================================')
-      console.log(isSignedIn)
-      console.log('====================================')
-      authorizeButton.current.style.display = 'none'
-      signoutButton.current.style.display = 'block'
-      listTaskLists()
-    } else {
-      console.log('=======not isSignedIn=============================')
-      console.log(isSignedIn)
-      console.log('====================================')
-      authorizeButton.current.style.display = 'block'
-      signoutButton.current.style.display = 'none'
+    // TODO: Generate and validate PKCE code_challenge value
+    const urlParams = {
+      response_type: 'code',
+      redirect_uri: config.GOOGLE_REDIRECT_URI,
+      client_id: config.GOOGLE_CLIENT_ID,
+      scope: 'profile email',
     }
-  }
-  /**
-   *  Sign in the user upon button click.
-   */
-  function handleAuthClick() {
-    gapi.auth2.getAuthInstance().signIn()
-  }
-  /**
-   *  Sign out the user upon button click.
-   */
-  function handleSignoutClick() {
-    gapi.auth2.getAuthInstance().signOut()
-  }
-  /**
-   * Append a pre element to the body containing the given message
-   * as its text node. Used to display the results of the API call.
-   *
-   * @param {string} message Text to be placed in pre element.
-   */
-  function appendPre(message) {
-    console.log('======message==============================')
-    console.log(message)
-    console.log('====================================')
-    console.log('====================================')
-    console.log(authorizeButton.current)
-    console.log('====================================')
-  }
-  /**
-   * Print task lists.
-   */
-  function listTaskLists() {
-    gapi.client.tasks.tasklists
-      .list({
-        maxResults: 10,
-      })
-      .then((response) => {
-        appendPre('Task Lists:')
-        const taskLists = response.result.items
-        if (taskLists && taskLists.length > 0) {
-          for (let i = 0; i < taskLists.length; i++) {
-            const taskList = taskLists[i]
-            appendPre(`${taskList.title} (${taskList.id})`)
-          }
-        } else {
-          appendPre('No task lists found.')
+    const authUrl = `${config.GOOGLE_AUTHORIZATION_URL}?${qs.stringify(urlParams)}`
+
+    const handleNavigation = (url) => {
+      const query = parse(url, true).query
+      if (query) {
+        if (query.error) {
+          reject(new Error(`There was an error: ${query.error}`))
+        } else if (query.code) {
+          // Login is complete
+          authWindow.removeAllListeners('closed')
+          setImmediate(() => authWindow.close())
+
+          // This is the authorization code we need to request tokens
+          resolve(query.code)
         }
-      })
+      }
+    }
+
+    authWindow.on('closed', () => {
+      // TODO: Handle this smoothly
+      throw new Error('Auth window was closed by user')
+    })
+
+    authWindow.webContents.on('will-navigate', (event, url) => {
+      handleNavigation(url)
+    })
+
+    authWindow.webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
+      handleNavigation(newUrl)
+    })
+
+    authWindow.loadURL(authUrl)
+  })
+
+export async function fetchAccessTokens(code) {
+  const response = await axios.post(
+    config.GOOGLE_TOKEN_URL,
+    qs.stringify({
+      code,
+      client_id: config.GOOGLE_CLIENT_ID,
+      redirect_uri: config.GOOGLE_REDIRECT_URI,
+      grant_type: 'authorization_code',
+    }),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    },
+  )
+  return response.data
+}
+
+export async function fetchGoogleProfile(accessToken) {
+  const response = await axios.get(config.GOOGLE_PROFILE_URL, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  return response.data
+}
+export const googleSignIn = async () => {
+  const code = await signInWithPopup()
+  const tokens = await fetchAccessTokens(code)
+  const { id, email, name } = await fetchGoogleProfile(tokens.access_token)
+  const providerUser = {
+    uid: id,
+    email,
+    displayName: name,
+    idToken: tokens.id_token,
   }
+
+  console.log('===============providerUser=====================')
+  console.log(providerUser)
+  console.log('====================================')
+  // return mySignInFunction(providerUser)
+  return providerUser
+}
+export default () => {
+  // const [response, setResponse] = useState('')
+  const handleLoginClick = () => googleSignIn()
 
   return (
     <div>
-      <p>Google Tasks API Quickstart</p>
-
-      <button
-        ref={authorizeButton}
-        id="authorize_button"
-        style={{ display: 'none' }}
-        onClick={handleAuthClick}
-      >
-        Authorize
-      </button>
-      <button
-        ref={signoutButton}
-        id="signout_button"
-        style={{ display: 'none' }}
-        onClick={handleSignoutClick}
-      >
-        Sign Out
-      </button>
+      <p>Google Tasks API</p>
+      response
+      <button onClick={handleLoginClick}>Login</button>
     </div>
   )
 }

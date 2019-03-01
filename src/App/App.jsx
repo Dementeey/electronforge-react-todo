@@ -1,14 +1,17 @@
-import React from 'react'
-import { Provider } from 'react-redux'
-import { makeStore } from '../redux/store'
-import TodoListContainer from './containers/TodoListContainer'
-// import ConnectToGApi from './components/ConnectToGApi'
+import React, { Fragment, useState } from 'react'
+import TodoList from './components/TodoList'
+import ConnectToGApi from './components/ConnectToGApi'
 
-export default () => (
-  <Provider store={makeStore()}>
-    <div>Account Name: {}</div>
+export default () => {
+  const [isLogin, changeIsLogin] = useState(false)
+  const handleClick = () => changeIsLogin(!isLogin)
 
-    {/* <ConnectToGApi /> */}
-    <TodoListContainer />
-  </Provider>
-)
+  return (
+    <Fragment>
+      <div>Account Name: </div>
+      <button onClick={handleClick}>logout</button>
+      <hr />
+      {isLogin ? <TodoList /> : <ConnectToGApi />}
+    </Fragment>
+  )
+}

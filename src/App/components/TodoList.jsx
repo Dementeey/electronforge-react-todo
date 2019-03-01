@@ -1,6 +1,6 @@
 import React from 'react'
 import { Segment, Container, Header, Item, Input, Tab } from 'semantic-ui-react'
-import TodoItem from '../TodoItem'
+import TodoItem from './TodoItem'
 
 const todoData = [
   {

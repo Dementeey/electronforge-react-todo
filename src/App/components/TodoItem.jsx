@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Item, Button, Grid, Accordion, Icon, Message } from 'semantic-ui-react'
-import TodoMenu from '../TodoMenu'
+import { Item, Button, Grid, Accordion, Icon } from 'semantic-ui-react'
+import TodoMenu from './TodoMenu'
 
 export default ({ data }) => {
   const [activeIndex, changeActiveIndex] = useState(0)
