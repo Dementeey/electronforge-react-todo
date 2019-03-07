@@ -1,3 +1,5 @@
 node_modules
 out
 .eslintcache
+.vscode/
+client_secret_233263060890-pksbnugsapeu5rnn7vdvqh5htdohq4c8.apps.googleusercontent.com.json

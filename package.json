@@ -48,7 +48,8 @@
   },
   "prettier": {
     "semi": false,
-    "printWidth": 100
+    "printWidth": 100,
+    "arrowParens": "avoid"
   },
   "dependencies": {
     "axios": "^0.18.0",

@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Segment, Container, Header, Item, Input, Tab } from 'semantic-ui-react'
 import TodoItem from './TodoItem'
+import getTasks from '../../../helpers/getTasks'
 
 const todoData = [
   {
@@ -24,13 +25,20 @@ const todoData = [
 ]
 
 export default () => {
+  const [tasks, setTasks] = useState([])
+  const [historyTasks, setHistoryTasks] = useState([])
+
+  useEffect(() => {
+    setTasks(getTasks())
+  }, [])
   /**
    * todo:
-   * First params @history bool, default = false
+   * First params @data object, default = {}
+   * Second params @history bool, default = false
    * Return => react node
    */
 
-  const todo = (history = false) => (
+  const todo = (data, history = false) => (
     <Container fluid>
       <Segment>
         <Header
@@ -41,7 +49,7 @@ export default () => {
           content={history ? 'History' : 'Todo'}
         />
         <Item.Group divided>
-          {todoData.map(item => (
+          {data.map(item => (
             <TodoItem data={item} key={item.id} />
           ))}
         </Item.Group>
@@ -52,8 +60,8 @@ export default () => {
   )
 
   const panes = [
-    { menuItem: 'Todo', render: () => <Tab.Pane>{todo()}</Tab.Pane> },
-    { menuItem: 'History', render: () => <Tab.Pane>{todo(true)}</Tab.Pane> },
+    { menuItem: 'Todo', render: () => <Tab.Pane>{todo(tasks)}</Tab.Pane> },
+    { menuItem: 'History', render: () => <Tab.Pane>{todo(historyTasks, true)}</Tab.Pane> },
   ]
 
   return (

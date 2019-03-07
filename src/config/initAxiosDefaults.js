@@ -1,0 +1,8 @@
+import axios from 'axios'
+import { globalConst } from './index'
+
+export const initAxiosDefaults = () => {
+  axios.defaults.baseURL = 'https://api.example.com'
+  axios.defaults.headers.common.Authorization = AUTH_TOKEN
+  axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+}
