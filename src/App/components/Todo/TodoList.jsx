@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
-import { Segment, Container, Header, Item, Input, Tab, Dropdown } from 'semantic-ui-react'
+import React, { useState, useEffect } from 'react'
+import { Segment, Container, Header, Item, Input, Tab } from 'semantic-ui-react'
+import filter from 'lodash/filter'
 import TodoItem from './TodoItem'
+import { getTasks } from '../../../helpers/getTasks'
 
 const todoData = [
   {
@@ -23,9 +25,22 @@ const todoData = [
   },
 ]
 
-export default () => {
-  const [tasks, setTasks] = useState([])
-  const [historyTasks, setHistoryTasks] = useState([])
+export default ({ currentList }) => {
+  const initialStateTodoTask = {
+    etag: '',
+    items: [],
+    kind: '',
+  }
+
+  const [tasks, setTasks] = useState(initialStateTodoTask)
+
+  useEffect(() => {
+    if (currentList) {
+      getTasks(currentList).then((data) => {
+        setTasks(data)
+      })
+    }
+  }, [currentList])
 
   /**
    * todo:
@@ -36,7 +51,7 @@ export default () => {
 
   const todo = (data, history = false) => (
     <Container fluid>
-      <Segment>
+      <Segment style={{ overflowY: 'auto', height: 400 }}>
         <Header
           as="h2"
           size="small"
@@ -45,8 +60,8 @@ export default () => {
           content={history ? 'History' : 'Todo'}
         />
         <Item.Group divided>
-          {todoData.map(item => (
-            <TodoItem data={item} key={item.id} />
+          {data.map(item => (
+            <TodoItem data={item} history={history} key={item.id} />
           ))}
         </Item.Group>
       </Segment>
@@ -56,9 +71,23 @@ export default () => {
   )
 
   const panes = [
-    { menuItem: 'Todo', render: () => <Tab.Pane>{todo(tasks)}</Tab.Pane> },
-    { menuItem: 'History', render: () => <Tab.Pane>{todo(historyTasks, true)}</Tab.Pane> },
+    {
+      menuItem: 'Todo',
+      render: () => (
+        <Tab.Pane>{todo(tasks.items.filter(item => item.status !== 'completed'))}</Tab.Pane>
+      ),
+    },
+    {
+      menuItem: 'History',
+      render: () => (
+        <Tab.Pane>{todo(tasks.items.filter(item => item.status === 'completed'), true)}</Tab.Pane>
+      ),
+    },
   ]
+
+  console.log('============im========================')
+  console.log(tasks.items)
+  console.log('====================================')
 
   return (
     <div

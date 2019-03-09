@@ -10,6 +10,9 @@ export default () => {
 
   if (userInfo) {
     initDefaultAxios(userInfo)
+    if (userInfo.accessToken && !isLogin) {
+      setLogin(true)
+    }
   }
 
   return isLogin ? <AppContent setLogin={setLogin} /> : <Login setLogin={setLogin} />

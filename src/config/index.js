@@ -9,8 +9,9 @@ export const globalConsts = {
   GOOGLE_API_KEY: 'AIzaSyCI4zi-hEMBJJjSigw-li0R2XDanDHo0bw',
   GOOGLE_AUTHORIZATION_URL: 'https://accounts.google.com/o/oauth2/v2/auth',
   GOOGLE_CLIENT_ID: '233263060890-pksbnugsapeu5rnn7vdvqh5htdohq4c8.apps.googleusercontent.com',
-  TASKS: {
+  API: {
     LISTS: '/tasks/v1/users/@me/lists',
+    TASKS: '/tasks/v1/lists',
   },
 }
 

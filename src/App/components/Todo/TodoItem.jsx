@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Item, Button, Grid, Accordion, Icon } from 'semantic-ui-react'
 import TodoMenu from './TodoMenu'
 
-export default ({ data }) => {
+export default ({ data, history }) => {
   const [activeIndex, changeActiveIndex] = useState(0)
   const [isDone, setIsDone] = useState(false)
   const handleDoneClick = () => setIsDone(true)
@@ -22,22 +22,26 @@ export default ({ data }) => {
             <Grid.Column
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <Button
-                size="mini"
-                circular
-                basic={!isDone}
-                color={isDone ? 'teal' : 'grey'}
-                onClick={handleDoneClick}
-                animated="fade"
-              />
+              {!history && (
+                <Button
+                  size="mini"
+                  circular
+                  basic={!isDone || data.status === 'completed'}
+                  color={isDone || data.status === 'completed' ? 'teal' : 'grey'}
+                  onClick={handleDoneClick}
+                  animated="fade"
+                />
+              )}
               <Accordion fluid style={{ margin: '0 10px 0 15px' }}>
                 <Accordion.Title active={activeIndex !== 0} index={0} onClick={handleClick}>
-                  <Icon name="dropdown" />
-                  {data.label}
+                  {data.notes && <Icon name="dropdown" />}
+                  {data.title}
                 </Accordion.Title>
-                <Accordion.Content active={activeIndex !== 0}>
-                  <p>{data.description}</p>
-                </Accordion.Content>
+                {data.notes && (
+                  <Accordion.Content active={activeIndex !== 0}>
+                    <p>{data.notes}</p>
+                  </Accordion.Content>
+                )}
               </Accordion>
               <TodoMenu />
             </Grid.Column>

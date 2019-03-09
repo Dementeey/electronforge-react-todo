@@ -1,4 +1,4 @@
-export const formatterListToDropdown = (initData) => {
+export const formatterListToDropdown = (initData, action) => {
   if (!Array.isArray(initData)) return []
 
   return initData.reduce((init, item) => {
@@ -6,6 +6,7 @@ export const formatterListToDropdown = (initData) => {
       key: item.id,
       value: item.id,
       text: item.title,
+      // onClick: (e, { value }) => action(value),
     })
 
     return init

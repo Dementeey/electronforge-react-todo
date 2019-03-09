@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { Header, Image, Placeholder, Dropdown, Button } from 'semantic-ui-react'
 import logoutApp from '../../../utils/logoutApp'
 
-export default ({ picture, name, email, options }) => (
+export default ({ picture, name, email, options, setCurrentList }) => (
   <Header
     style={{
       margin: '10px 15px',
@@ -13,13 +13,10 @@ export default ({ picture, name, email, options }) => (
       {picture && name && email ? (
         <Fragment>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {/* <Image style={{ height: 40, width: 40 }} title={name} circular src={picture} /> */}
-
             <Dropdown
               trigger={
                 <Image style={{ height: 40, width: 40 }} title={name} circular src={picture} />
               }
-              // options={avatarOptions}
               pointing="top left"
               icon={null}
             >
@@ -45,6 +42,7 @@ export default ({ picture, name, email, options }) => (
           selection
           options={options}
           defaultValue={options.length > 1 && options[0].value}
+          onChange={(e, { value }) => setCurrentList(value)}
         />
       </div>
     </div>
