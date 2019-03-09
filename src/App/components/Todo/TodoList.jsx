@@ -1,29 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Segment, Container, Header, Item, Input, Tab } from 'semantic-ui-react'
-import filter from 'lodash/filter'
+import { Segment, Container, Item, Input, Tab, Menu, Label, Icon } from 'semantic-ui-react'
 import TodoItem from './TodoItem'
 import { getTasks } from '../../../helpers/getTasks'
-
-const todoData = [
-  {
-    id: 1,
-    label: 'text1',
-    description: 'descasdasdasdasdasdasdasdasdasdasd1',
-    isDone: false,
-  },
-  {
-    id: 2,
-    label: 'text2',
-    description: 'descasdasdasdasdasdasdasdasdasdasd2',
-    isDone: false,
-  },
-  {
-    id: 3,
-    label: 'text3',
-    description: 'descasdasdasdasdasdasdasdasdasdasd3',
-    isDone: false,
-  },
-]
 
 export default ({ currentList }) => {
   const initialStateTodoTask = {
@@ -37,7 +15,12 @@ export default ({ currentList }) => {
   useEffect(() => {
     if (currentList) {
       getTasks(currentList).then((data) => {
-        setTasks(data)
+        if (data.items) {
+          setTasks(data)
+        }
+        if (!data.items) {
+          setTasks(initialStateTodoTask)
+        }
       })
     }
   }, [currentList])
@@ -51,14 +34,7 @@ export default ({ currentList }) => {
 
   const todo = (data, history = false) => (
     <Container fluid>
-      <Segment style={{ overflowY: 'auto', height: 400 }}>
-        <Header
-          as="h2"
-          size="small"
-          color="grey"
-          icon={history ? 'history' : 'tasks'}
-          content={history ? 'History' : 'Todo'}
-        />
+      <Segment style={{ overflowY: 'auto', height: '50vh' }}>
         <Item.Group divided>
           {data.map(item => (
             <TodoItem data={item} history={history} key={item.id} />
@@ -72,13 +48,27 @@ export default ({ currentList }) => {
 
   const panes = [
     {
-      menuItem: 'Todo',
+      menuItem: (
+        <Menu.Item key="todo">
+          <Icon name="tasks" />
+          Todo
+          <Label color="teal">
+            {tasks.items.filter(item => item.status !== 'completed').length}
+          </Label>
+        </Menu.Item>
+      ),
       render: () => (
         <Tab.Pane>{todo(tasks.items.filter(item => item.status !== 'completed'))}</Tab.Pane>
       ),
     },
     {
-      menuItem: 'History',
+      menuItem: (
+        <Menu.Item key="history">
+          <Icon name="history" />
+          History
+          <Label>{tasks.items.filter(item => item.status === 'completed').length}</Label>
+        </Menu.Item>
+      ),
       render: () => (
         <Tab.Pane>{todo(tasks.items.filter(item => item.status === 'completed'), true)}</Tab.Pane>
       ),
@@ -93,7 +83,7 @@ export default ({ currentList }) => {
     <div
       style={{
         display: 'flex',
-        background: 'linear-gradient(to top, #6435c9,#f7a670, rgb(241, 218, 54), #41e3ff)',
+        background: 'linear-gradient(to top, #340f56, #f0e0ff)',
         height: '100vh',
         margin: 0,
         position: 'relative',
@@ -110,7 +100,7 @@ export default ({ currentList }) => {
           transform: 'translate(-50%, -50%)',
         }}
       >
-        <Tab panes={panes} />
+        <Tab menu={{ pointing: true }} grid={{ paneWidth: 12, tabWidth: 6 }} panes={panes} />
       </div>
     </div>
   )

@@ -40,6 +40,7 @@ export default ({ picture, name, email, options, setCurrentList }) => (
         <Dropdown
           title="Task list"
           selection
+          search
           options={options}
           defaultValue={options.length > 1 && options[0].value}
           onChange={(e, { value }) => setCurrentList(value)}

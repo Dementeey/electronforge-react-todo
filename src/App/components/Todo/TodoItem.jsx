@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Item, Button, Grid, Accordion, Icon } from 'semantic-ui-react'
+import { Item, Button, Grid, Accordion, Icon, Label } from 'semantic-ui-react'
 import TodoMenu from './TodoMenu'
 
 export default ({ data, history }) => {
@@ -34,14 +34,18 @@ export default ({ data, history }) => {
               )}
               <Accordion fluid style={{ margin: '0 10px 0 15px' }}>
                 <Accordion.Title active={activeIndex !== 0} index={0} onClick={handleClick}>
-                  {data.notes && <Icon name="dropdown" />}
+                  <Icon name="dropdown" />
                   {data.title}
                 </Accordion.Title>
-                {data.notes && (
-                  <Accordion.Content active={activeIndex !== 0}>
-                    <p>{data.notes}</p>
-                  </Accordion.Content>
-                )}
+                <Accordion.Content active={activeIndex !== 0}>
+                  <p>{data.notes}</p>
+                  {data.due && (
+                    <Label color="violet">
+                      <Icon name="calendar check outline" />
+                      {new Date(data.due).toDateString()}
+                    </Label>
+                  )}
+                </Accordion.Content>
               </Accordion>
               <TodoMenu />
             </Grid.Column>
