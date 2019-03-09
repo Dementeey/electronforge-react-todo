@@ -17,7 +17,7 @@ export default ({ data }) => {
   return (
     <Item>
       <Item.Content verticalAlign="middle">
-        <Grid divided textAlign="center">
+        <Grid divided>
           <Grid.Row>
             <Grid.Column
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}

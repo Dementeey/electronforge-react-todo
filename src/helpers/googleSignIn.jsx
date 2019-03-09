@@ -65,6 +65,7 @@ const fetchAccessTokens = async (code) => {
       redirect_uri: globalConsts.GOOGLE_REDIRECT_URI,
       grant_type: 'authorization_code',
       client_secret: '1eXu1EtaZrcD57jUI3L2CZeF',
+      access_type: 'offline',
     }),
     {
       headers: {

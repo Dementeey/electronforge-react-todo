@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Segment, Container, Header, Item, Input, Tab } from 'semantic-ui-react'
+import React, { useState } from 'react'
+import { Segment, Container, Header, Item, Input, Tab, Dropdown } from 'semantic-ui-react'
 import TodoItem from './TodoItem'
-import getTasks from '../../../helpers/getTasks'
 
 const todoData = [
   {
@@ -28,9 +27,6 @@ export default () => {
   const [tasks, setTasks] = useState([])
   const [historyTasks, setHistoryTasks] = useState([])
 
-  useEffect(() => {
-    setTasks(getTasks())
-  }, [])
   /**
    * todo:
    * First params @data object, default = {}
@@ -49,7 +45,7 @@ export default () => {
           content={history ? 'History' : 'Todo'}
         />
         <Item.Group divided>
-          {data.map(item => (
+          {todoData.map(item => (
             <TodoItem data={item} key={item.id} />
           ))}
         </Item.Group>
@@ -67,16 +63,26 @@ export default () => {
   return (
     <div
       style={{
-        width: '90vw',
-        maxWidth: '600px',
-        minWidth: '350px',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
+        display: 'flex',
+        background: 'linear-gradient(to top, #6435c9,#f7a670, rgb(241, 218, 54), #41e3ff)',
+        height: '100vh',
+        margin: 0,
+        position: 'relative',
       }}
     >
-      <Tab panes={panes} />
+      <div
+        style={{
+          width: '90vw',
+          maxWidth: '600px',
+          minWidth: '350px',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        <Tab panes={panes} />
+      </div>
     </div>
   )
 }

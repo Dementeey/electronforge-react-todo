@@ -1,27 +1,16 @@
-import React, { Fragment, useState, useEffect } from 'react'
-import TodoList from './components/Todo/TodoList'
-import Header from './components/Header'
+import React, { useState } from 'react'
 import Login from './components/Login'
+import AppContent from './components/AppContent'
+import getParseUser from '../utils/getParseUser'
+import initDefaultAxios from '../helpers/initDefaultAxios'
 
 export default () => {
+  const userInfo = getParseUser('user')
   const [isLogin, setLogin] = useState(false)
-  const [user, setUser] = useState(JSON.parse(global.localStorage.getItem('user')))
 
-  useEffect(() => {
-    const userInfo = JSON.parse(global.localStorage.getItem('user'))
-    if (userInfo.accessToken) {
-      setLogin(true)
-    }
+  if (userInfo) {
+    initDefaultAxios(userInfo)
+  }
 
-    setUser(userInfo)
-  }, [])
-
-  return (
-    <Fragment>
-      <Header name={user.name} picture={user.picture} email={user.email} />
-      <hr />
-
-      {isLogin ? <TodoList /> : <Login setLogin={setLogin} />}
-    </Fragment>
-  )
+  return isLogin ? <AppContent setLogin={setLogin} /> : <Login setLogin={setLogin} />
 }
