@@ -5,6 +5,7 @@ import { getTaskLists } from '../../../helpers/apiTasks'
 import TodoList from '../Todo/TodoList'
 import Header from '../Header'
 import { formatterListToDropdown } from '../../../utils/formattersToDropdown'
+import AppInfo from '../AppInfo'
 
 export default ({ setLogin }) => {
   const userInfo = getParseUser('user')
@@ -54,6 +55,7 @@ export default ({ setLogin }) => {
       />
 
       {currentList ? <TodoList currentList={currentList} /> : renderLoader()}
+      <AppInfo />
     </Fragment>
   )
 

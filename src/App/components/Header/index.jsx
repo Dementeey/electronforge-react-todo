@@ -95,8 +95,7 @@ export default ({ name, email, options, picture, currentList, setCurrentList }) 
             selection
             search
             options={options}
-            value={currentList}
-            defaultValue={currentList || (options.length > 1 && options[0].value)}
+            value={currentList || (options.length > 1 && options[0].value)}
             onChange={(e, { value }) => setCurrentList(value)}
           />
           <Button

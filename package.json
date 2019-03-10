@@ -1,8 +1,8 @@
 {
   "name": "todo-desktop",
-  "productName": "todo-desktop",
-  "version": "0.0.1",
-  "description": "My Electron application description",
+  "productName": "ToDo-Desktop",
+  "version": "0.1.0",
+  "description": "ToDo-Desktop Electron Application Desktop with 'GOOGLE TASKS API'",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
