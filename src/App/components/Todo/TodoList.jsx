@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Segment, Container, Item, Input, Tab, Menu, Label, Icon } from 'semantic-ui-react'
 import TodoItem from './TodoItem'
 import { getTasks, insertTask } from '../../../helpers/apiTasks'
+import ZeroState from '../ZerroState'
 
 export default ({ currentList }) => {
   const initialStateTodoTask = {
@@ -43,16 +44,18 @@ export default ({ currentList }) => {
     setLoadNewData(true)
     await insertTask(currentList, JSON.stringify(bodyTitleTask))
     setLoadNewData(false)
-    setBodyTitleTask('')
+    setBodyTitleTask({ title: '' })
   }
 
   const todo = (data = [], history = false) => (
     <Container fluid>
       <Segment loading={isLoadNewData} style={{ overflowY: 'auto', height: '50vh' }}>
         <Item.Group divided>
-          {data.map(item => (
-            <TodoItem data={item} history={history} key={item.id} />
-          ))}
+          {data.length ? (
+            data.map(item => <TodoItem data={item} history={history} key={item.id} />)
+          ) : (
+            <ZeroState history={history} />
+          )}
         </Item.Group>
       </Segment>
 

@@ -15,6 +15,12 @@ export const getTasks = async (idTaskList) => {
 }
 
 // POST
+export const insertList = async (body = {}) => {
+  const { data } = await axios.post(`${globalConsts.API.LISTS}`, body)
+
+  return data
+}
+
 export const insertTask = async (idTaskList, body = {}) => {
   const { data } = await axios.post(`${globalConsts.API.TASKS}/${idTaskList}/tasks/`, body)
 

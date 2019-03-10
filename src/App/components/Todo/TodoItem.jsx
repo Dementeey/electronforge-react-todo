@@ -14,6 +14,8 @@ export default ({ data, history }) => {
     changeActiveIndex(newIndex)
   }
 
+  const isRenderAccordionContent = () => data.notes || data.due
+
   return (
     <Item>
       <Item.Content verticalAlign="middle">
@@ -34,18 +36,21 @@ export default ({ data, history }) => {
               )}
               <Accordion fluid style={{ margin: '0 10px 0 15px' }}>
                 <Accordion.Title active={activeIndex !== 0} index={0} onClick={handleClick}>
-                  <Icon name="dropdown" />
+                  {isRenderAccordionContent() && <Icon name="dropdown" />}
                   {data.title}
                 </Accordion.Title>
-                <Accordion.Content active={activeIndex !== 0}>
-                  <p>{data.notes}</p>
-                  {data.due && (
-                    <Label color="violet">
-                      <Icon name="calendar check outline" />
-                      {new Date(data.due).toDateString()}
-                    </Label>
-                  )}
-                </Accordion.Content>
+
+                {isRenderAccordionContent() && (
+                  <Accordion.Content active={activeIndex !== 0}>
+                    <p>{data.notes}</p>
+                    {data.due && (
+                      <Label color="violet">
+                        <Icon name="calendar check outline" />
+                        {new Date(data.due).toDateString()}
+                      </Label>
+                    )}
+                  </Accordion.Content>
+                )}
               </Accordion>
               <TodoMenu />
             </Grid.Column>

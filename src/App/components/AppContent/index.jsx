@@ -29,10 +29,12 @@ export default ({ setLogin }) => {
     }
 
     getTaskLists().then((data) => {
-      setCurrentList(data.items[0].id)
+      if (!currentList) {
+        setCurrentList(data.items[0].id)
+      }
       setTaskLists(data)
     })
-  }, [])
+  }, [currentList])
 
   const renderLoader = () => (
     <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
@@ -46,8 +48,9 @@ export default ({ setLogin }) => {
         name={user.name}
         picture={user.picture}
         email={user.email}
-        options={formatterListToDropdown(taskLists.items, setCurrentList)}
+        currentList={currentList}
         setCurrentList={setCurrentList}
+        options={formatterListToDropdown(taskLists.items, setCurrentList)}
       />
 
       {currentList ? <TodoList currentList={currentList} /> : renderLoader()}
