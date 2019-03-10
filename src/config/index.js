@@ -16,4 +16,4 @@ export const globalConsts = {
 }
 
 axios.defaults.baseURL = globalConsts.GOOGLE_BASE_API_URL
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.headers.post['Content-Type'] = 'application/json'

@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useEffect } from 'react'
 import { Loader } from 'semantic-ui-react'
+import getParseUser from '../../../utils/getParseUser'
+import { getTaskLists } from '../../../helpers/apiTasks'
 import TodoList from '../Todo/TodoList'
 import Header from '../Header'
-import getParseUser from '../../../utils/getParseUser'
-import { getTaskLists } from '../../../helpers/getTasks'
 import { formatterListToDropdown } from '../../../utils/formattersToDropdown'
 
 export default ({ setLogin }) => {

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Segment, Container, Item, Input, Tab, Menu, Label, Icon } from 'semantic-ui-react'
 import TodoItem from './TodoItem'
-import { getTasks } from '../../../helpers/getTasks'
+import { getTasks, insertTask } from '../../../helpers/apiTasks'
 
 export default ({ currentList }) => {
   const initialStateTodoTask = {
@@ -10,7 +10,10 @@ export default ({ currentList }) => {
     kind: '',
   }
 
+  const inputRef = useRef(null)
   const [tasks, setTasks] = useState(initialStateTodoTask)
+  const [isLoadNewData, setLoadNewData] = useState(false)
+  const [bodyTitleTask, setBodyTitleTask] = useState({ title: '' })
 
   useEffect(() => {
     if (currentList) {
@@ -23,18 +26,29 @@ export default ({ currentList }) => {
         }
       })
     }
-  }, [currentList])
+  }, [currentList, isLoadNewData])
 
-  /**
-   * todo:
-   * First params @data object, default = {}
-   * Second params @history bool, default = false
-   * Return => react node
-   */
+  const handleChangeNewTask = (e, { value }) => {
+    setBodyTitleTask({
+      title: value,
+    })
+  }
 
-  const todo = (data, history = false) => (
+  const handleAddNewTask = async () => {
+    if (!bodyTitleTask.title) {
+      inputRef.current.focus()
+      return
+    }
+
+    setLoadNewData(true)
+    await insertTask(currentList, JSON.stringify(bodyTitleTask))
+    setLoadNewData(false)
+    setBodyTitleTask('')
+  }
+
+  const todo = (data = [], history = false) => (
     <Container fluid>
-      <Segment style={{ overflowY: 'auto', height: '50vh' }}>
+      <Segment loading={isLoadNewData} style={{ overflowY: 'auto', height: '50vh' }}>
         <Item.Group divided>
           {data.map(item => (
             <TodoItem data={item} history={history} key={item.id} />
@@ -42,7 +56,17 @@ export default ({ currentList }) => {
         </Item.Group>
       </Segment>
 
-      {!history && <Input fluid action={{ color: 'teal', icon: 'add' }} placeholder="add..." />}
+      {!history && (
+        <Input
+          fluid
+          ref={inputRef}
+          placeholder="add..."
+          value={bodyTitleTask.title || ''}
+          onChange={handleChangeNewTask}
+          onKeyPress={({ charCode }) => charCode === 13 && handleAddNewTask()}
+          action={{ color: 'teal', icon: 'add', onClick: handleAddNewTask }}
+        />
+      )}
     </Container>
   )
 
@@ -100,7 +124,7 @@ export default ({ currentList }) => {
           transform: 'translate(-50%, -50%)',
         }}
       >
-        <Tab menu={{ pointing: true }} grid={{ paneWidth: 12, tabWidth: 6 }} panes={panes} />
+        <Tab menu={{ pointing: true }} panes={panes} />
       </div>
     </div>
   )
