@@ -1,11 +1,27 @@
 import React, { useState } from 'react'
 import { Item, Button, Grid, Accordion, Icon, Label } from 'semantic-ui-react'
-import TodoMenu from './TodoMenu'
+import { completeTask } from '../../../helpers/apiTasks'
 
-export default ({ data, history }) => {
+// import TodoMenu from './TodoMenu'
+
+export default ({ data, history, currentList, setLoadNewData }) => {
   const [activeIndex, changeActiveIndex] = useState(0)
-  const [isDone, setIsDone] = useState(false)
-  const handleDoneClick = () => setIsDone(true)
+  const [isCompleted, setComplete] = useState(false)
+
+  const handleCompleteTask = async () => {
+    const { id } = data
+    const body = {
+      status: 'completed',
+      updated: new Date().toISOString(),
+      id,
+    }
+
+    setComplete(true)
+    await completeTask(currentList, id, JSON.stringify(body))
+
+    setLoadNewData(true)
+    setLoadNewData(false)
+  }
 
   const handleClick = (e, titleProps) => {
     const { index } = titleProps
@@ -24,16 +40,17 @@ export default ({ data, history }) => {
             <Grid.Column
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              {!history && (
-                <Button
-                  size="mini"
-                  circular
-                  basic={!isDone || data.status === 'completed'}
-                  color={isDone || data.status === 'completed' ? 'teal' : 'grey'}
-                  onClick={handleDoneClick}
-                  animated="fade"
+              {!history && isCompleted ? (
+                <Icon name="circle thin" color="teal" />
+              ) : (
+                <Icon
+                  name="circle outline"
+                  disabled={isCompleted}
+                  onClick={handleCompleteTask}
+                  style={{ cursor: 'pointer' }}
                 />
               )}
+
               <Accordion fluid style={{ margin: '0 10px 0 15px' }}>
                 <Accordion.Title active={activeIndex !== 0} index={0} onClick={handleClick}>
                   {isRenderAccordionContent() && <Icon name="dropdown" />}
@@ -52,7 +69,12 @@ export default ({ data, history }) => {
                   </Accordion.Content>
                 )}
               </Accordion>
-              <TodoMenu />
+              {/* <TodoMenu /> */}
+              {history ? (
+                <Icon style={{ cursor: 'pointer' }} color="grey" name="trash" title="Coming soon" />
+              ) : (
+                <Icon style={{ cursor: 'pointer' }} color="grey" name="edit" title="Coming soon" />
+              )}
             </Grid.Column>
           </Grid.Row>
         </Grid>

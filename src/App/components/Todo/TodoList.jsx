@@ -52,7 +52,15 @@ export default ({ currentList }) => {
       <Segment loading={isLoadNewData} style={{ overflowY: 'auto', height: '50vh' }}>
         <Item.Group divided>
           {data.length ? (
-            data.map(item => <TodoItem data={item} history={history} key={item.id} />)
+            data.map(item => (
+              <TodoItem
+                data={item}
+                key={item.id}
+                history={history}
+                currentList={currentList}
+                setLoadNewData={setLoadNewData}
+              />
+            ))
           ) : (
             <ZeroState history={history} />
           )}
@@ -101,10 +109,6 @@ export default ({ currentList }) => {
       ),
     },
   ]
-
-  console.log('============im========================')
-  console.log(tasks.items)
-  console.log('====================================')
 
   return (
     <div

@@ -8,8 +8,10 @@ export const getTaskLists = async () => {
   return data
 }
 
-export const getTasks = async (idTaskList) => {
-  const { data } = await axios.get(`${globalConsts.API.TASKS}/${idTaskList}/tasks/`)
+export const getTasks = async (taskList, maxResults = 200) => {
+  const { data } = await axios.get(
+    `${globalConsts.API.TASKS}/${taskList}/tasks?maxResults=${maxResults}&&showHidden=true`,
+  )
 
   return data
 }
@@ -21,8 +23,15 @@ export const insertList = async (body = {}) => {
   return data
 }
 
-export const insertTask = async (idTaskList, body = {}) => {
-  const { data } = await axios.post(`${globalConsts.API.TASKS}/${idTaskList}/tasks/`, body)
+export const insertTask = async (taskList, body = {}) => {
+  const { data } = await axios.post(`${globalConsts.API.TASKS}/${taskList}/tasks/`, body)
+
+  return data
+}
+
+// PUT
+export const completeTask = async (taskList, task, body = {}) => {
+  const { data } = await axios.put(`${globalConsts.API.TASKS}/${taskList}/tasks/${task}`, body)
 
   return data
 }
