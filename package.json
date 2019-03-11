@@ -1,6 +1,6 @@
 {
   "name": "todo-desktop",
-  "productName": "ToDo-Desktop",
+  "productName": "todo",
   "version": "0.1.0",
   "description": "ToDo-Desktop Electron Application Desktop with 'GOOGLE TASKS API'",
   "main": "src/index.js",
@@ -29,10 +29,11 @@
         ]
       },
       "electronPackagerConfig": {
+        "executableName": "todo-app",
         "packageManager": "yarn"
       },
       "electronWinstallerConfig": {
-        "name": "my_new_project"
+        "name": "todo-app"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
@@ -42,8 +43,32 @@
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "todo-desktop"
-      }
+        "name": "todo-app"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-dmg",
+          "platforms": [
+            "darwin"
+          ],
+          "config": {
+            "maintainer": "Anton Loyko",
+            "homepage": "https://github.com/dementeey",
+            "background": ".src/App/assets/loginBG.jpg",
+            "format": "ULFO"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "platforms": [
+            "linux"
+          ],
+          "config": {
+            "maintainer": "Anton Loyko",
+            "homepage": "https://github.com/dementeey"
+          }
+        }
+      ]
     }
   },
   "prettier": {
