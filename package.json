@@ -81,7 +81,7 @@
     "electron-compile": "^6.4.4",
     "electron-devtools-installer": "^2.1.0",
     "electron-squirrel-startup": "^1.0.0",
-    "googleapis": "27",
+    "googleapis": "59",
     "lodash": "^4.17.11",
     "prettier": "^1.16.4",
     "react": "^16.8.3",
